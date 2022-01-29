@@ -1,0 +1,42 @@
+.Label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+  padding-right: 5px;
+  border-radius: 0.5em;
+
+  &:hover {
+    background: #666;
+    color: #ccc;
+  }
+}
+
+.Menu {
+  min-width: 180px;
+  background: #202020;
+  border: 1px solid #666;
+  font-size: 1rem;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &__item {
+    width: 100%;
+    padding: 8px 8px 8px 2em;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    color: #ccc;
+
+    &:hover {
+      background: #666;
+    }
+
+    &--selected:before {
+      content: "\e5ca";
+      font-family: "Material Icons";
+      position: absolute;
+      left: 0.8em;
+    }
+  }
+}
