@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import io from "socket.io-client";
 
 const refresh = () => {
@@ -6,8 +6,9 @@ const refresh = () => {
 };
 
 function AppStartup(props) {
-  const {host, appPort, pluginVersion} = props;
+  const {host, pluginInfo, setPluginInfo} = props;
   const [socket, setSocket] = useState(null);
+  const currentPluginInfo = useRef(props.pluginInfo);
 
   useEffect(() => {
     if (host) {
@@ -18,26 +19,24 @@ function AppStartup(props) {
         _socket.disconnect();
       });
     }
-  }, [host]);
+  }, [host, setSocket]);
 
   useEffect(() => {
     if (socket) {
       const onSocketConnected = () => {
         socket.emit("callMethod", {
           endpoint: "user_interface/now_playing",
-          method: "broadcastPluginInfo",
+          method: "getPluginInfo",
         });
       };
 
       const onPluginInfo = (info) => {
-        if (appPort && `${info.appPort}` !== `${appPort}`) {
-          const href = window.location.href.replace(
-            `:${appPort}`,
-            `:${info.appPort}`
-          );
-          window.location.href = href;
-        } else if (pluginVersion && info.pluginVersion !== pluginVersion) {
-          refresh();
+        const current = currentPluginInfo.current;
+        if (!current || (`${info.appPort}` !== `${current.appPort}` ||
+          info.version !== current.version ||
+          info.appUrl !== current.appUrl ||
+          info.apiPath !== current.apiPath)) {
+            setPluginInfo(info);
         }
       };
 
@@ -49,14 +48,29 @@ function AppStartup(props) {
       socket.connect();
 
       return () => {
-        ['connect', 'reconnect'].forEach(event => {
+        ['connect', 'reconnect'].forEach(event => {    
           socket.off(event, onSocketConnected);
         });
 
         socket.off('nowPlayingPluginInfo', onPluginInfo);
       }
     }
-  }, [socket, appPort, pluginVersion]);
+  }, [socket, setPluginInfo]);
+
+  useEffect(() => {
+    // Plugin info updated - compare and decide whether to reload
+    if (pluginInfo && currentPluginInfo.current) {
+      const current = currentPluginInfo.current;
+      if (pluginInfo.previewUrl !== current.previewUrl && 
+        window.location.href.startsWith(current.previewUrl)) {
+          window.location.href = pluginInfo.previewUrl;
+      }
+      else if (pluginInfo.version !== current.version) {
+        refresh();
+      }
+    }
+    currentPluginInfo.current = pluginInfo;
+  }, [pluginInfo]);
 
   return null;
 }

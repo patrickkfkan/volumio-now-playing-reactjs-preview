@@ -22,29 +22,37 @@ const getHost = () => {
   return getInitialData('host') || getUrlSearchParam('host');
 };
 
-const getNowPlayingUrl = () => {
-  return getInitialData('nowPlayingUrl') || getUrlSearchParam('url');
-};
+const getInitialPluginInfo = () => {
+  return getInitialData('pluginInfo', null);
+}
 
 function App() {
   const [size, setSize] = useState([480, 320]);
+  const [pluginInfo, setPluginInfo] = useState(getInitialPluginInfo());
   const host = getHost();
-  const nowPlayingUrl = getNowPlayingUrl();
-  const appPort = getInitialData('appPort');
-  const pluginVersion = getInitialData('pluginVersion');
+
+  const appUrl = pluginInfo ? pluginInfo.appUrl : null;
 
   return (
     <>
-      <AppStartup host={host} appPort={appPort} pluginVersion={pluginVersion} />
+      <AppStartup 
+        host={host} 
+        pluginInfo={pluginInfo}
+        setPluginInfo={setPluginInfo} />
       <div className={styles.Layout}>
         <div className={styles.Layout__toolbar}>
           <Toolbar size={size} onSizeChange={setSize} />
         </div>
         <div className={styles.Layout__contents}>
-          <PreviewFrame 
-            src={nowPlayingUrl} 
+          {
+          appUrl ? 
+            <PreviewFrame 
+            src={appUrl} 
             size={size} 
             onDragResize={setSize} />
+          :
+          null
+          }
         </div>
       </div>
     </>
