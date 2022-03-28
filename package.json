@@ -1,6 +1,6 @@
 {
   "name": "now-playing-reactjs-preview",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "/preview",
   "private": true,
   "dependencies": {
