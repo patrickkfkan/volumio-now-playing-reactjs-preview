@@ -2,6 +2,9 @@ Preview page served by [Volumio Now Playing plugin](https://github.com/patrickkf
 
 ## Changelog
 
+0.1.1
+- Change app startup process
+
 0.1.0
 - Initial release
 
