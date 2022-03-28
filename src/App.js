@@ -28,10 +28,11 @@ const getInitialPluginInfo = () => {
 
 function App() {
   const [size, setSize] = useState([480, 320]);
+  const [kioskMode, setKioskMode] = useState(false);
   const [pluginInfo, setPluginInfo] = useState(getInitialPluginInfo());
   const host = getHost();
 
-  const appUrl = pluginInfo ? pluginInfo.appUrl : null;
+  const appUrl = pluginInfo ? pluginInfo.appUrl + (kioskMode ? '?kiosk=1' : '') : null;
 
   return (
     <>
@@ -41,7 +42,11 @@ function App() {
         setPluginInfo={setPluginInfo} />
       <div className={styles.Layout}>
         <div className={styles.Layout__toolbar}>
-          <Toolbar size={size} onSizeChange={setSize} />
+          <Toolbar 
+            size={size} 
+            onSizeChange={setSize} 
+            kioskMode={kioskMode}
+            setKioskMode={setKioskMode} />
         </div>
         <div className={styles.Layout__contents}>
           {

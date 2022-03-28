@@ -28,3 +28,12 @@
     background: #666;
   }
 }
+
+.KioskModeCheckBox {
+  cursor: pointer;
+
+  > input {
+    margin-right: 8px;
+    margin-left: 1em;
+  }
+}
